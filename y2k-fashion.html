@@ -3046,24 +3046,30 @@
     function playBling() {
       var audioCtx = getCtx();
       var now = audioCtx.currentTime;
-      var wobble = 0.97 + Math.random() * 0.06;
-      var tones = [1760 * wobble, 2637 * wobble];
+      var wobble = 0.99 + Math.random() * 0.02;
+      var notes = [988 * wobble, 1319 * wobble];
 
-      tones.forEach(function (freq, i) {
+      notes.forEach(function (freq, i) {
+        var start = now + i * 0.065;
         var osc = audioCtx.createOscillator();
         var gain = audioCtx.createGain();
+        var filter = audioCtx.createBiquadFilter();
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 3200;
+
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.15, now + 0.12);
+        osc.frequency.setValueAtTime(freq, start);
 
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(i === 0 ? 0.16 : 0.08, now + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.13, start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.32);
 
-        osc.connect(gain);
+        osc.connect(filter);
+        filter.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.5);
+        osc.start(start);
+        osc.stop(start + 0.35);
       });
     }
 
