@@ -201,6 +201,25 @@
     50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
   }
 
+  /* ---------- scattered background stickers ---------- */
+  .bg-sticker {
+    position: absolute;
+    display: none;
+    pointer-events: none;
+    z-index: 0;
+    filter: drop-shadow(0 2px 3px rgba(var(--shadow-ink-rgb), 0.22));
+  }
+
+  .bg-sticker svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @media (min-width: 1200px) {
+    .bg-sticker { display: block; }
+  }
+
   .hero h1 {
     font-family: var(--font-display);
     font-size: clamp(3rem, 12vw, 7.5rem);
@@ -2964,5 +2983,50 @@
     rerollBtn.addEventListener('click', function () {
       if (currentSign) generate(currentSign);
     });
+  })();
+</script>
+
+<script>
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var icons = [
+      'icon-star', 'icon-heart', 'icon-flower', 'icon-disc', 'icon-butterfly-mini', 'icon-rose',
+      'icon-bow', 'icon-lace-heart', 'icon-blinkie-star', 'icon-cross-charm', 'icon-spider', 'icon-chain-link'
+    ];
+    var colors = ['var(--pink-hot)', 'var(--pink-hot-2)', 'var(--sky-deep)', 'var(--pink-deep)', 'var(--plum-ink)', 'var(--accent-yellow)'];
+    var count = 18;
+    var margin = 220;
+    var pageHeight = document.documentElement.scrollHeight;
+    var usableHeight = Math.max(200, pageHeight - margin * 2);
+
+    for (var i = 0; i < count; i++) {
+      var el = document.createElement('div');
+      el.className = 'bg-sticker';
+
+      var icon = icons[Math.floor(Math.random() * icons.length)];
+      var color = colors[Math.floor(Math.random() * colors.length)];
+      var size = (1.1 + Math.random() * 1.1).toFixed(2);
+      var side = Math.random() > 0.5 ? 'left' : 'right';
+      var edge = (0.6 + Math.random() * 3.2).toFixed(2);
+      var top = Math.round(margin + Math.random() * usableHeight);
+      var rot = Math.round(Math.random() * 50 - 25);
+
+      el.style.top = top + 'px';
+      el.style[side] = edge + '%';
+      el.style.width = size + 'rem';
+      el.style.height = size + 'rem';
+      el.style.color = color;
+      el.style.opacity = (0.55 + Math.random() * 0.3).toFixed(2);
+      el.style.setProperty('--r', rot + 'deg');
+      el.style.transform = 'rotate(' + rot + 'deg)';
+
+      if (!reduceMotion) {
+        el.style.animation = 'floaty ' + (4 + Math.random() * 3).toFixed(1) + 's ease-in-out infinite';
+        el.style.animationDelay = (Math.random() * 3).toFixed(1) + 's';
+      }
+
+      el.innerHTML = '<svg viewBox="0 0 24 24"><use href="#' + icon + '"></use></svg>';
+      document.body.appendChild(el);
+    }
   })();
 </script>
