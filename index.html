@@ -1,4 +1,4 @@
-<meta charset="utf-8">
+1<meta charset="utf-8">
 <title>Y2K Fashion — So Fetch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="A pastel Y2K fashion nostalgia site — lookbook, shop, dress-up doll, moodboard, bracelet maker, memes, zine, and horoscope — with a one-click gothic lolita color-scheme toggle.">
@@ -450,6 +450,48 @@
   }
 
   .sound-toggle.muted .mute-slash { display: block; }
+
+  /* ---------- background music toggle ---------- */
+  .music-toggle {
+    position: fixed;
+    top: 1.1rem;
+    right: 13.25rem;
+    z-index: 20;
+    width: 3.4rem;
+    height: 3.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pink-hot-2);
+    border: 3px solid var(--chrome-1);
+    border-radius: 50%;
+    box-shadow: 0 0.5rem 1rem rgba(var(--shadow-rgb), 0.32);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.3s ease;
+  }
+
+  .music-toggle svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--ink-on-accent);
+    display: block;
+  }
+
+  .music-toggle:hover { transform: scale(1.08); }
+
+  .music-toggle:focus-visible {
+    outline: 3px solid var(--pink-hot);
+    outline-offset: 3px;
+  }
+
+  .music-toggle.playing { background: var(--sky-deep); }
+
+  .music-toggle.playing svg { animation: music-pulse 1.6s ease-in-out infinite; }
+
+  @keyframes music-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
 
   /* ---------- back to top button ---------- */
   .to-top-btn {
@@ -1698,6 +1740,10 @@
 <button type="button" id="sound-toggle" class="sound-toggle" aria-pressed="false" aria-label="Mute sound effects">
   <svg viewBox="0 0 24 24"><use href="#icon-speaker"></use></svg>
   <span class="mute-slash" aria-hidden="true"></span>
+</button>
+
+<button type="button" id="music-toggle" class="music-toggle" aria-pressed="false" aria-label="Play background music">
+  <svg viewBox="0 0 24 24"><use href="#icon-social-note"></use></svg>
 </button>
 
 <button type="button" id="to-top-btn" class="to-top-btn" aria-label="Back to top">
@@ -3372,5 +3418,162 @@
     hoverTargets.forEach(function (el) {
       el.addEventListener('mouseenter', function () { burstSparkles(el); });
     });
+  })();
+</script>
+
+<script>
+  (function () {
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    var toggleBtn = document.getElementById('music-toggle');
+    if (!AudioCtx || !toggleBtn) {
+      if (toggleBtn) toggleBtn.style.display = 'none';
+      return;
+    }
+
+    var STORAGE_KEY = 'y2k-music-enabled';
+    var CHORDS = [
+      [220.00, 261.63, 329.63, 392.00],
+      [174.61, 220.00, 261.63, 329.63],
+      [261.63, 329.63, 392.00, 493.88],
+      [196.00, 246.94, 293.66, 440.00]
+    ];
+    var CHORD_DURATION = 4.2;
+
+    var ctx = null;
+    var masterGain = null;
+    var isPlaying = false;
+    var chordIndex = 0;
+    var chordTimer = null;
+
+    function getCtx() {
+      if (!ctx) {
+        ctx = new AudioCtx();
+        masterGain = ctx.createGain();
+        masterGain.gain.value = 0;
+        var compressor = ctx.createDynamicsCompressor();
+        masterGain.connect(compressor);
+        compressor.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+
+    function playPad(notes, duration) {
+      var now = ctx.currentTime;
+      notes.forEach(function (freq, i) {
+        var osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+
+        var warmOsc = ctx.createOscillator();
+        warmOsc.type = 'triangle';
+        warmOsc.frequency.value = freq;
+        warmOsc.detune.value = 6;
+
+        var noteGain = ctx.createGain();
+        var peak = i === 0 ? 0.045 : 0.028;
+        noteGain.gain.setValueAtTime(0, now);
+        noteGain.gain.linearRampToValueAtTime(peak, now + 1.4);
+        noteGain.gain.setValueAtTime(peak, now + duration - 1.2);
+        noteGain.gain.linearRampToValueAtTime(0, now + duration);
+
+        osc.connect(noteGain);
+        warmOsc.connect(noteGain);
+        noteGain.connect(masterGain);
+
+        osc.start(now);
+        osc.stop(now + duration + 0.1);
+        warmOsc.start(now);
+        warmOsc.stop(now + duration + 0.1);
+      });
+    }
+
+    function playArpNote(freq) {
+      var now = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq * 2;
+
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 1.2);
+    }
+
+    function scheduleChord() {
+      if (!isPlaying) return;
+      var chord = CHORDS[chordIndex % CHORDS.length];
+      playPad(chord, CHORD_DURATION);
+
+      var arpStep = 0.7;
+      var arpCount = Math.floor(CHORD_DURATION / arpStep) - 1;
+      for (var a = 0; a < arpCount; a++) {
+        (function (idx) {
+          setTimeout(function () {
+            if (isPlaying) playArpNote(chord[idx % chord.length]);
+          }, a * arpStep * 1000 + 500);
+        })(a);
+      }
+
+      chordIndex++;
+      chordTimer = setTimeout(scheduleChord, CHORD_DURATION * 1000);
+    }
+
+    function startMusic() {
+      if (isPlaying) return;
+      getCtx();
+      isPlaying = true;
+      var now = ctx.currentTime;
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+      masterGain.gain.linearRampToValueAtTime(1, now + 1.8);
+      chordIndex = 0;
+      scheduleChord();
+    }
+
+    function stopMusic() {
+      if (!isPlaying) return;
+      isPlaying = false;
+      clearTimeout(chordTimer);
+      if (ctx && masterGain) {
+        var now = ctx.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+        masterGain.gain.linearRampToValueAtTime(0, now + 1);
+      }
+    }
+
+    function updateUI() {
+      toggleBtn.classList.toggle('playing', isPlaying);
+      toggleBtn.setAttribute('aria-pressed', String(isPlaying));
+      toggleBtn.setAttribute('aria-label', isPlaying ? 'Pause background music' : 'Play background music');
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      if (isPlaying) {
+        stopMusic();
+      } else {
+        startMusic();
+      }
+      updateUI();
+      try { localStorage.setItem(STORAGE_KEY, isPlaying ? '1' : '0'); } catch (e) {}
+    });
+
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === '1') {
+        var resumeOnce = function () {
+          document.removeEventListener('click', resumeOnce);
+          document.removeEventListener('keydown', resumeOnce);
+          startMusic();
+          updateUI();
+        };
+        document.addEventListener('click', resumeOnce);
+        document.addEventListener('keydown', resumeOnce);
+      }
+    } catch (e) {}
   })();
 </script>
