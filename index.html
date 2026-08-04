@@ -3220,31 +3220,43 @@
     function playBling() {
       var audioCtx = getCtx();
       var now = audioCtx.currentTime;
-      var wobble = 0.99 + Math.random() * 0.02;
-      var notes = [988 * wobble, 1319 * wobble];
 
-      notes.forEach(function (freq, i) {
-        var start = now + i * 0.065;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        var filter = audioCtx.createBiquadFilter();
+      var bufferSize = Math.max(1, Math.floor(audioCtx.sampleRate * 0.02));
+      var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
 
-        filter.type = 'lowpass';
-        filter.frequency.value = 3200;
+      var noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, start);
+      var noiseFilter = audioCtx.createBiquadFilter();
+      noiseFilter.type = 'highpass';
+      noiseFilter.frequency.value = 2600 + Math.random() * 800;
 
-        gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.13, start + 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.32);
+      var noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.5, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
 
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(start);
-        osc.stop(start + 0.35);
-      });
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start(now);
+      noise.stop(now + 0.03);
+
+      var osc = audioCtx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(170 + Math.random() * 30, now);
+
+      var oscGain = audioCtx.createGain();
+      oscGain.gain.setValueAtTime(0.12, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+
+      osc.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.03);
     }
 
     function updateToggleUI() {
