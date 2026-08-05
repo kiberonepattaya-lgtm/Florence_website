@@ -63,6 +63,32 @@
     --swatch-active-bg: #3a2440;
   }
 
+  :root.party {
+    --pink-bg: #fff8e1;
+    --pink-bg-2: #ece1ff;
+    --pink-hot: #b98ee0;
+    --pink-hot-2: #ffcb61;
+    --pink-deep: #6b3fa0;
+    --sky: #fff3b0;
+    --sky-deep: #8f5fc9;
+    --paper: #fffdf5;
+    --chrome-1: #ffffff;
+    --chrome-2: #f0e0ff;
+    --chrome-3: #ffd166;
+    --skin: #faecde;
+    --suit: #d8bdf0;
+    --body-text: #4a3760;
+    --heading-text: #7a49b8;
+    --shadow-rgb: 107, 63, 160;
+    --shadow-ink-rgb: 74, 55, 96;
+    --accent-rgb: 185, 142, 224;
+    --paper-rgb: 255, 253, 245;
+    --ink-on-accent: #fff8e8;
+    --accent-yellow: #ffd166;
+    --note-ink: #3a2450;
+    --swatch-active-bg: #fff3c4;
+  }
+
   * { box-sizing: border-box; }
 
   html, body {
@@ -151,7 +177,7 @@
     outline-offset: 2px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 1180px) {
     .nav-pill {
       flex-wrap: nowrap;
       justify-content: flex-start;
@@ -164,6 +190,26 @@
     .nav-pill::-webkit-scrollbar { display: none; }
 
     .nav-pill a { flex: 0 0 auto; }
+
+    .site-nav {
+      padding-top: 3.6rem;
+    }
+
+    .heart-btn,
+    .butterfly-btn,
+    .sound-toggle,
+    .music-toggle,
+    .party-toggle {
+      top: 0.6rem;
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+
+    .sound-toggle { left: 0.6rem; }
+    .music-toggle { left: 3.6rem; }
+    .heart-btn { right: 0.6rem; }
+    .butterfly-btn { right: 3.6rem; }
+    .party-toggle { right: 6.6rem; }
   }
 
   #lookbook,
@@ -408,7 +454,7 @@
   .sound-toggle {
     position: fixed;
     top: 1.1rem;
-    right: 9.2rem;
+    left: 1.1rem;
     z-index: 20;
     width: 3.4rem;
     height: 3.4rem;
@@ -455,7 +501,7 @@
   .music-toggle {
     position: fixed;
     top: 1.1rem;
-    right: 13.25rem;
+    left: 5.15rem;
     z-index: 20;
     width: 3.4rem;
     height: 3.4rem;
@@ -491,6 +537,54 @@
   @keyframes music-pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.08); }
+  }
+
+  /* ---------- flower (party toggle) button ---------- */
+  .party-toggle {
+    position: fixed;
+    top: 1.1rem;
+    right: 9.2rem;
+    z-index: 20;
+    width: 3.4rem;
+    height: 3.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffd166 0%, #b98ee0 100%);
+    border: 3px solid var(--chrome-1);
+    border-radius: 50%;
+    box-shadow: 0 0.5rem 1rem rgba(var(--shadow-rgb), 0.32);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.3s ease;
+  }
+
+  .party-toggle svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    color: var(--ink-on-accent);
+    display: block;
+  }
+
+  .party-toggle:hover {
+    transform: scale(1.08);
+  }
+
+  .party-toggle:focus-visible {
+    outline: 3px solid var(--pink-hot);
+    outline-offset: 3px;
+  }
+
+  .party-toggle.active {
+    background: var(--pink-deep);
+  }
+
+  .party-toggle.bloom svg {
+    animation: petal-bloom 0.5s ease;
+  }
+
+  @keyframes petal-bloom {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.25) rotate(20deg); }
   }
 
   /* ---------- back to top button ---------- */
@@ -562,6 +656,44 @@
     0% { transform: translate(-50%, -50%) translate(0, 0) scale(0.4) rotate(0deg); opacity: 1; }
     55% { opacity: 1; }
     100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(1.15) rotate(var(--rot)); opacity: 0; }
+  }
+
+  .petal-particle {
+    position: fixed;
+    top: -2rem;
+    left: 0;
+    width: 1.3rem;
+    height: 1.3rem;
+    pointer-events: none;
+    z-index: 15;
+    animation: party-petal-fall var(--fall-dur, 7s) linear forwards;
+  }
+
+  .petal-particle svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @keyframes party-petal-fall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0.9; }
+    100% { transform: translate(var(--drift, 40px), 105vh) rotate(var(--spin, 360deg)); opacity: 0.75; }
+  }
+
+  .confetti-piece {
+    position: fixed;
+    top: -1.5rem;
+    left: 0;
+    width: 0.55rem;
+    height: 1rem;
+    pointer-events: none;
+    z-index: 16;
+    animation: confetti-fall var(--fall-dur, 6s) linear forwards;
+  }
+
+  @keyframes confetti-fall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0.95; }
+    100% { transform: translate(var(--drift, 60px), 105vh) rotate(var(--spin, 540deg)); opacity: 0.85; }
   }
 
   /* ---------- sticky note ---------- */
@@ -1746,6 +1878,10 @@
   <svg viewBox="0 0 24 24"><use href="#icon-social-note"></use></svg>
 </button>
 
+<button type="button" id="party-toggle" class="party-toggle" aria-pressed="false" aria-label="Switch to pastel yellow &amp; lavender party theme">
+  <svg viewBox="0 0 24 24"><use href="#icon-flower"></use></svg>
+</button>
+
 <button type="button" id="to-top-btn" class="to-top-btn" aria-label="Back to top">
   <svg viewBox="0 0 24 24"><use href="#icon-arrow-up"></use></svg>
 </button>
@@ -2656,9 +2792,15 @@
     var w, h;
     var HUES = {
       pastel: ['255,111,196', '167,232,255'],
-      gothic: ['163,35,79', '185,142,224']
+      gothic: ['163,35,79', '185,142,224'],
+      party: ['255,203,97', '185,142,224']
     };
-    var activeHues = document.documentElement.classList.contains('gothic') ? HUES.gothic : HUES.pastel;
+    function currentMode() {
+      if (document.documentElement.classList.contains('gothic')) return 'gothic';
+      if (document.documentElement.classList.contains('party')) return 'party';
+      return 'pastel';
+    }
+    var activeHues = HUES[currentMode()];
 
     function resize() {
       w = canvas.width = window.innerWidth;
@@ -2680,8 +2822,8 @@
       }
     }
 
-    window.setSparkleHues = function (isGothic) {
-      activeHues = isGothic ? HUES.gothic : HUES.pastel;
+    window.setSparkleHues = function (mode) {
+      activeHues = HUES[mode] || HUES.pastel;
       for (var i = 0; i < sparkles.length; i++) {
         sparkles[i].hue = Math.random() > 0.5 ? activeHues[0] : activeHues[1];
       }
@@ -2856,6 +2998,7 @@
 <script>
   (function () {
     var toggleBtn = document.getElementById('gothic-toggle');
+    var partyBtn = document.getElementById('party-toggle');
     var root = document.documentElement;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -2865,6 +3008,14 @@
       toggleBtn.setAttribute('aria-pressed', String(isGothic));
       toggleBtn.setAttribute('aria-label', isGothic ? 'Switch to pastel Y2K colors' : 'Switch to gothic lolita colors');
 
+      if (isGothic && root.classList.contains('party')) {
+        root.classList.remove('party');
+        partyBtn.classList.remove('active');
+        partyBtn.setAttribute('aria-pressed', 'false');
+        partyBtn.setAttribute('aria-label', 'Switch to pastel yellow & lavender party theme');
+        if (window.setPartyPetals) window.setPartyPetals(false);
+      }
+
       if (!reduceMotion) {
         toggleBtn.classList.remove('flap');
         void toggleBtn.offsetWidth;
@@ -2872,7 +3023,101 @@
       }
 
       if (window.setSparkleHues) {
-        window.setSparkleHues(isGothic);
+        window.setSparkleHues(isGothic ? 'gothic' : (root.classList.contains('party') ? 'party' : 'pastel'));
+      }
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var petalColors = ['var(--pink-hot)', 'var(--pink-hot-2)', 'var(--sky-deep)'];
+    var petalTimer = null;
+
+    function spawnPetal() {
+      var wrap = document.createElement('div');
+      wrap.className = 'petal-particle';
+      wrap.style.left = (Math.random() * 100) + 'vw';
+      wrap.style.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+      wrap.style.setProperty('--fall-dur', (5 + Math.random() * 4) + 's');
+      wrap.style.setProperty('--drift', (Math.random() * 160 - 80) + 'px');
+      wrap.style.setProperty('--spin', (Math.random() * 480 - 240) + 'deg');
+      wrap.innerHTML = '<svg viewBox="0 0 24 24"><use href="#icon-flower"></use></svg>';
+      document.body.appendChild(wrap);
+      wrap.addEventListener('animationend', function () { wrap.remove(); });
+    }
+
+    window.setPartyPetals = function (on) {
+      if (petalTimer) {
+        clearInterval(petalTimer);
+        petalTimer = null;
+      }
+      if (on && !reduceMotion) {
+        petalTimer = setInterval(spawnPetal, 350);
+        spawnPetal();
+      }
+    };
+  })();
+</script>
+
+<script>
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var confettiColors = ['#ff2f9e', '#ffcb61', '#a7e8ff', '#b98ee0', '#7CFFB2', '#ff6cc0'];
+
+    function spawnConfetti() {
+      var piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = (Math.random() * 100) + 'vw';
+      piece.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      piece.style.setProperty('--fall-dur', (4 + Math.random() * 3) + 's');
+      piece.style.setProperty('--drift', (Math.random() * 200 - 100) + 'px');
+      piece.style.setProperty('--spin', (Math.random() * 720 - 360) + 'deg');
+      document.body.appendChild(piece);
+      piece.addEventListener('animationend', function () { piece.remove(); });
+    }
+
+    if (!reduceMotion) {
+      setInterval(spawnConfetti, 220);
+      for (var i = 0; i < 12; i++) {
+        setTimeout(spawnConfetti, i * 60);
+      }
+    }
+  })();
+</script>
+
+<script>
+  (function () {
+    var toggleBtn = document.getElementById('party-toggle');
+    var gothicBtn = document.getElementById('gothic-toggle');
+    var root = document.documentElement;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    toggleBtn.addEventListener('click', function () {
+      var isParty = root.classList.toggle('party');
+      toggleBtn.classList.toggle('active', isParty);
+      toggleBtn.setAttribute('aria-pressed', String(isParty));
+      toggleBtn.setAttribute('aria-label', isParty ? 'Switch to pastel Y2K colors' : 'Switch to pastel yellow & lavender party theme');
+
+      if (isParty && root.classList.contains('gothic')) {
+        root.classList.remove('gothic');
+        gothicBtn.classList.remove('active');
+        gothicBtn.setAttribute('aria-pressed', 'false');
+        gothicBtn.setAttribute('aria-label', 'Switch to gothic lolita colors');
+      }
+
+      if (!reduceMotion) {
+        toggleBtn.classList.remove('bloom');
+        void toggleBtn.offsetWidth;
+        toggleBtn.classList.add('bloom');
+      }
+
+      if (window.setSparkleHues) {
+        window.setSparkleHues(isParty ? 'party' : (root.classList.contains('gothic') ? 'gothic' : 'pastel'));
+      }
+      if (window.setPartyPetals) {
+        window.setPartyPetals(isParty);
       }
     });
   })();
