@@ -627,76 +627,6 @@
     outline-offset: 3px;
   }
 
-  /* ---------- vinyl (Iconic by Mistake) button ---------- */
-  .vinyl-btn {
-    position: fixed;
-    bottom: 1.3rem;
-    left: 1.3rem;
-    z-index: 20;
-    width: 3.4rem;
-    height: 3.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--plum-ink);
-    border: 3px solid var(--chrome-1);
-    border-radius: 50%;
-    box-shadow: 0 0.5rem 1rem rgba(var(--shadow-rgb), 0.32);
-    cursor: pointer;
-    transition: transform 0.15s ease, background 0.3s ease;
-  }
-
-  .vinyl-btn svg {
-    width: 1.8rem;
-    height: 1.8rem;
-    color: var(--ink-on-accent);
-    display: block;
-  }
-
-  .vinyl-btn:hover {
-    transform: scale(1.08);
-  }
-
-  .vinyl-btn:focus-visible {
-    outline: 3px solid var(--pink-hot);
-    outline-offset: 3px;
-  }
-
-  .vinyl-btn.active {
-    background: var(--pink-hot);
-    animation: vinyl-spin 3s linear infinite;
-  }
-
-  @keyframes vinyl-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .vinyl-player {
-    position: fixed;
-    bottom: 5.2rem;
-    left: 1.3rem;
-    z-index: 21;
-    width: 16rem;
-    max-width: calc(100vw - 2.6rem);
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 0.6rem 1.4rem rgba(var(--shadow-rgb), 0.35);
-    border: 3px solid var(--chrome-1);
-    background: var(--paper);
-    display: none;
-  }
-
-  .vinyl-player.open {
-    display: block;
-  }
-
-  .vinyl-player iframe {
-    display: block;
-    width: 100%;
-    height: 9rem;
-    border: 0;
-  }
-
   @keyframes heart-pop {
     0% { transform: scale(1); }
     25% { transform: scale(1.35, 0.7); }
@@ -1939,11 +1869,6 @@
 <button type="button" id="to-top-btn" class="to-top-btn" aria-label="Back to top">
   <svg viewBox="0 0 24 24"><use href="#icon-arrow-up"></use></svg>
 </button>
-
-<button type="button" id="vinyl-btn" class="vinyl-btn" aria-pressed="false" aria-label="Play Iconic by Mistake — KATSEYE x ILLIT x LE SSERAFIM">
-  <svg viewBox="0 0 24 24"><use href="#icon-disc"></use></svg>
-</button>
-<div class="vinyl-player" id="vinyl-player" aria-hidden="true"></div>
 
 <svg style="display:none" aria-hidden="true">
   <defs>
@@ -3584,44 +3509,6 @@
     });
 
     updateVisibility();
-  })();
-</script>
-
-<script>
-  (function () {
-    var vinylBtn = document.getElementById('vinyl-btn');
-    var vinylPlayer = document.getElementById('vinyl-player');
-    var VIDEO_ID = '27C4pfRsf9g';
-    var playing = false;
-
-    function stopSong() {
-      vinylPlayer.innerHTML = '';
-      vinylPlayer.classList.remove('open');
-      vinylPlayer.setAttribute('aria-hidden', 'true');
-      vinylBtn.classList.remove('active');
-      vinylBtn.setAttribute('aria-pressed', 'false');
-      vinylBtn.setAttribute('aria-label', 'Play Iconic by Mistake — KATSEYE x ILLIT x LE SSERAFIM');
-      playing = false;
-    }
-
-    function playSong() {
-      var iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube-nocookie.com/embed/' + VIDEO_ID + '?autoplay=1&rel=0';
-      iframe.title = 'Iconic by Mistake — KATSEYE x ILLIT x LE SSERAFIM';
-      iframe.allow = 'autoplay; encrypted-media';
-      iframe.allowFullscreen = true;
-      vinylPlayer.appendChild(iframe);
-      vinylPlayer.classList.add('open');
-      vinylPlayer.setAttribute('aria-hidden', 'false');
-      vinylBtn.classList.add('active');
-      vinylBtn.setAttribute('aria-pressed', 'true');
-      vinylBtn.setAttribute('aria-label', 'Stop Iconic by Mistake');
-      playing = true;
-    }
-
-    vinylBtn.addEventListener('click', function () {
-      if (playing) stopSong(); else playSong();
-    });
   })();
 </script>
 
