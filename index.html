@@ -2,36 +2,46 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Nikolai Site</title>
+<title>Nikolai's Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #87ceeb;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: "Segoe UI", "Trebuchet MS", Verdana, sans-serif;
     text-align: center;
+    overflow: hidden;
+  }
+  body {
+    background: linear-gradient(120deg, #87ceeb, #3fa9e0, #a7e8ff, #4fb8e0, #87ceeb);
+    background-size: 400% 400%;
+    animation: shimmer 8s ease infinite;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   h1 {
     font-size: 4rem;
     color: #ffffff;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 2px 2px 6px rgba(0, 0, 0, 0.2);
     margin-bottom: 0.5rem;
   }
   p {
     font-size: 1.3rem;
-    color: #1a3a4a;
+    color: #0d2c3a;
   }
 </style>
 </head>
 <body>
   <div>
-    <h1>Nikolai Site</h1>
-    <p>In my free time, I love playing the piano.</p>
+    <h1>Nikolai's Site</h1>
+    <p>In my free time, I like playing the piano.</p>
   </div>
 </body>
 </html>
