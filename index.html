@@ -86,9 +86,77 @@
     font-size: 1.05rem;
     line-height: 1.5;
   }
+  .cube-scene {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    perspective: 600px;
+    z-index: 0;
+    animation: float 5s ease-in-out infinite;
+  }
+  .cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    cursor: grab;
+    touch-action: none;
+  }
+  .cube:active {
+    cursor: grabbing;
+  }
+  .face {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 2px solid #00d9ff;
+    background: rgba(0, 217, 255, 0.12);
+    box-shadow: 0 0 15px #00d9ff, inset 0 0 15px rgba(0, 217, 255, 0.4);
+  }
+  .face.front  { transform: translateZ(40px); }
+  .face.back   { transform: translateZ(-40px) rotateY(180deg); }
+  .face.right  { transform: rotateY(90deg) translateZ(40px); }
+  .face.left   { transform: rotateY(-90deg) translateZ(40px); }
+  .face.top    { transform: rotateX(90deg) translateZ(40px); }
+  .face.bottom { transform: rotateX(-90deg) translateZ(40px); }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+  }
 </style>
 </head>
 <body>
+  <div class="cube-scene" style="top: 12%; left: 6%;">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
+  <div class="cube-scene" style="top: 18%; right: 7%; animation-delay: 1s;">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
+  <div class="cube-scene" style="bottom: 10%; left: 10%; animation-delay: 2s;">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
+
   <div class="intro">
     <h1>Nikolai's Site</h1>
     <p>In my free time, I like playing the piano.</p>
@@ -111,7 +179,46 @@
   <section>
     <h2>Contact</h2>
     <p>Want to get in touch? Feel free to reach out anytime.</p>
-    <p>You can email me at nikolai@example.com.</p>
+    <p>You can email me at nikolai@gmail.com.</p>
   </section>
+
+  <script>
+    document.querySelectorAll('.cube').forEach(function (cube) {
+      var rotX = -20, rotY = -30;
+      var dragging = false, lastX = 0, lastY = 0;
+
+      function render() {
+        cube.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+      }
+
+      cube.addEventListener('pointerdown', function (e) {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        cube.setPointerCapture(e.pointerId);
+      });
+      cube.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        rotY += (e.clientX - lastX) * 0.5;
+        rotX -= (e.clientY - lastY) * 0.5;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        render();
+      });
+      cube.addEventListener('pointerup', function () { dragging = false; });
+      cube.addEventListener('pointercancel', function () { dragging = false; });
+
+      function tick() {
+        if (!dragging) {
+          rotY += 0.3;
+          render();
+        }
+        requestAnimationFrame(tick);
+      }
+
+      render();
+      tick();
+    });
+  </script>
 </body>
 </html>
