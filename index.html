@@ -5,6 +5,40 @@
 <title>Nikolai's Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  :root {
+    --bg1: #87ceeb;
+    --bg2: #3fa9e0;
+    --bg3: #a7e8ff;
+    --bg4: #4fb8e0;
+    --bg5: #87ceeb;
+    --accent-1: #5ec2f0;
+    --accent-2: #1f7fc4;
+    --accent-shadow: #135a8f;
+    --heading: #ffffff;
+    --text: #0d2c3a;
+    --section-bg: rgba(255, 255, 255, 0.6);
+    --neon: #00d9ff;
+    --header-bg: rgba(255, 255, 255, 0.25);
+    --nav-link: #0d2c3a;
+  }
+
+  html[data-theme="red"] {
+    --bg1: #4a0000;
+    --bg2: #7a0d0d;
+    --bg3: #a30000;
+    --bg4: #5c0000;
+    --bg5: #4a0000;
+    --accent-1: #d9342b;
+    --accent-2: #7a0d0d;
+    --accent-shadow: #470707;
+    --heading: #ffe8e8;
+    --text: #ffe3e3;
+    --section-bg: rgba(0, 0, 0, 0.35);
+    --neon: #ff3b3b;
+    --header-bg: rgba(0, 0, 0, 0.3);
+    --nav-link: #ffe3e3;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -13,9 +47,70 @@
     text-align: center;
   }
   body {
-    background: linear-gradient(120deg, #87ceeb, #3fa9e0, #a7e8ff, #4fb8e0, #87ceeb);
+    background: linear-gradient(120deg, var(--bg1), var(--bg2), var(--bg3), var(--bg4), var(--bg5));
     background-size: 400% 400%;
     animation: shimmer 8s ease infinite;
+    transition: background 0.6s ease;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .theme-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--accent-shadow), 0 8px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.6s ease;
+  }
+  .theme-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--accent-shadow), 0 3px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.2rem 4rem;
+    background: var(--header-bg);
+    transition: background 0.6s ease;
+  }
+  .site-name {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--heading);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+  .site-nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .site-nav a {
+    color: var(--nav-link);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.05rem;
+    transition: opacity 0.2s ease;
+  }
+  .site-nav a:hover {
+    opacity: 0.7;
+  }
+
+  main {
     padding: 3rem 1rem;
   }
   .intro {
@@ -23,20 +118,15 @@
     flex-direction: column;
     align-items: center;
   }
-  @keyframes shimmer {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
   h1 {
     font-size: 4rem;
-    color: #ffffff;
+    color: var(--heading);
     text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 2px 2px 6px rgba(0, 0, 0, 0.2);
     margin-bottom: 0.5rem;
   }
   p {
     font-size: 1.3rem;
-    color: #0d2c3a;
+    color: var(--text);
   }
   .hmm-btn {
     margin-top: 1.5rem;
@@ -44,48 +134,51 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: #ffffff;
-    background: linear-gradient(180deg, #5ec2f0, #1f7fc4);
+    background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    box-shadow:
-      0 6px 0 #135a8f,
-      0 10px 14px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 0 var(--accent-shadow), 0 10px 14px rgba(0, 0, 0, 0.3);
     transform: translateY(0);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
-  .hmm-btn:hover {
-    background: linear-gradient(180deg, #6ecbf5, #2a8fd6);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.6s ease;
   }
   .hmm-btn:active {
     transform: translateY(6px);
-    box-shadow:
-      0 0 0 #135a8f,
-      0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 var(--accent-shadow), 0 4px 6px rgba(0, 0, 0, 0.3);
   }
   #message {
     margin-top: 1.2rem;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #0d2c3a;
+    color: var(--text);
     min-height: 1.6rem;
   }
   section {
     max-width: 600px;
     margin: 2.5rem auto 0;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--section-bg);
     border-radius: 12px;
     padding: 1.5rem 2rem;
+    transition: background 0.6s ease;
   }
   section h2 {
-    color: #135a8f;
+    color: var(--heading);
     margin-top: 0;
   }
   section p {
-    color: #0d2c3a;
+    color: var(--text);
     font-size: 1.05rem;
     line-height: 1.5;
   }
+
+  .site-footer {
+    padding: 1.5rem;
+    color: var(--heading);
+    font-size: 1rem;
+    background: var(--header-bg);
+    transition: background 0.6s ease;
+  }
+
   .cube-scene {
     position: fixed;
     width: 80px;
@@ -109,9 +202,10 @@
     position: absolute;
     width: 80px;
     height: 80px;
-    border: 2px solid #00d9ff;
+    border: 2px solid var(--neon);
     background: rgba(0, 217, 255, 0.12);
-    box-shadow: 0 0 15px #00d9ff, inset 0 0 15px rgba(0, 217, 255, 0.4);
+    box-shadow: 0 0 15px var(--neon), inset 0 0 15px rgba(0, 217, 255, 0.4);
+    transition: border-color 0.6s ease, box-shadow 0.6s ease;
   }
   .face.front  { transform: translateZ(40px); }
   .face.back   { transform: translateZ(-40px) rotateY(180deg); }
@@ -126,6 +220,8 @@
 </style>
 </head>
 <body>
+  <button class="theme-btn" id="theme-toggle">Theme</button>
+
   <div class="cube-scene" style="top: 12%; left: 6%;">
     <div class="cube">
       <div class="face front"></div>
@@ -157,32 +253,54 @@
     </div>
   </div>
 
-  <div class="intro">
-    <h1>Nikolai's Site</h1>
-    <p>In my free time, I like playing the piano.</p>
-    <button class="hmm-btn" onclick="document.getElementById('message').textContent = 'Hello, Nikolai! You just built your 26th website.'">Hmm...</button>
-    <div id="message"></div>
-  </div>
+  <header class="site-header">
+    <div class="site-name">Nikolai</div>
+    <nav class="site-nav">
+      <a href="#about">About</a>
+      <a href="#hobbies">Hobbies</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-  <section>
-    <h2>About Me</h2>
-    <p>Hi, I'm Nikolai! I enjoy building websites and learning new things about how the web works.</p>
-    <p>I like experimenting with colors, layouts, and little interactive touches to make each site feel unique.</p>
-  </section>
+  <main>
+    <div class="intro">
+      <h1>Nikolai's Site</h1>
+      <p>In my free time, I like playing the piano.</p>
+      <button class="hmm-btn" onclick="document.getElementById('message').textContent = 'Hello, Nikolai! You just built your 26th website.'">Hmm...</button>
+      <div id="message"></div>
+    </div>
 
-  <section>
-    <h2>My Hobbies</h2>
-    <p>Playing the piano is one of my favorite ways to relax and be creative.</p>
-    <p>I also enjoy exploring new music and practicing pieces I love.</p>
-  </section>
+    <section id="about">
+      <h2>About Me</h2>
+      <p>Hi, I'm Nikolai! I enjoy building websites and learning new things about how the web works.</p>
+      <p>I like experimenting with colors, layouts, and little interactive touches to make each site feel unique.</p>
+    </section>
 
-  <section>
-    <h2>Contact</h2>
-    <p>Want to get in touch? Feel free to reach out anytime.</p>
-    <p>You can email me at nikolai@gmail.com.</p>
-  </section>
+    <section id="hobbies">
+      <h2>My Hobbies</h2>
+      <p>Playing the piano is one of my favorite ways to relax and be creative.</p>
+      <p>I also enjoy exploring new music and practicing pieces I love.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Want to get in touch? Feel free to reach out anytime.</p>
+      <p>You can email me at nikolai@gmail.com.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">Made by Nikolai</footer>
 
   <script>
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'red') {
+        html.removeAttribute('data-theme');
+      } else {
+        html.setAttribute('data-theme', 'red');
+      }
+    });
+
     document.querySelectorAll('.cube').forEach(function (cube) {
       var rotX = -20, rotY = -30;
       var dragging = false, lastX = 0, lastY = 0;
