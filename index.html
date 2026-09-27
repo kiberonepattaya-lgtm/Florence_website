@@ -8,18 +8,20 @@
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height: 100%;
     font-family: "Segoe UI", "Trebuchet MS", Verdana, sans-serif;
     text-align: center;
-    overflow: hidden;
   }
   body {
     background: linear-gradient(120deg, #87ceeb, #3fa9e0, #a7e8ff, #4fb8e0, #87ceeb);
     background-size: 400% 400%;
     animation: shimmer 8s ease infinite;
+    padding: 3rem 1rem;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   @keyframes shimmer {
     0%   { background-position: 0% 50%; }
@@ -68,14 +70,48 @@
     color: #0d2c3a;
     min-height: 1.6rem;
   }
+  section {
+    max-width: 600px;
+    margin: 2.5rem auto 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+  }
+  section h2 {
+    color: #135a8f;
+    margin-top: 0;
+  }
+  section p {
+    color: #0d2c3a;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
-  <div>
+  <div class="intro">
     <h1>Nikolai's Site</h1>
     <p>In my free time, I like playing the piano.</p>
     <button class="hmm-btn" onclick="document.getElementById('message').textContent = 'Hello, Nikolai! You just built your 26th website.'">Hmm...</button>
     <div id="message"></div>
   </div>
+
+  <section>
+    <h2>About Me</h2>
+    <p>Hi, I'm Nikolai! I enjoy building websites and learning new things about how the web works.</p>
+    <p>I like experimenting with colors, layouts, and little interactive touches to make each site feel unique.</p>
+  </section>
+
+  <section>
+    <h2>My Hobbies</h2>
+    <p>Playing the piano is one of my favorite ways to relax and be creative.</p>
+    <p>I also enjoy exploring new music and practicing pieces I love.</p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p>Want to get in touch? Feel free to reach out anytime.</p>
+    <p>You can email me at nikolai@example.com.</p>
+  </section>
 </body>
 </html>
