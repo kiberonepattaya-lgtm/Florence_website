@@ -1181,6 +1181,30 @@
 
 
 
+
+  /* ---------- Fake "hacked" effect (purely visual) ---------- */
+  .hk-overlay { position: fixed; inset: 0; z-index: 9999; display: none; background: rgba(0, 8, 0, 0.78); color: #33ff66; font-family: "Courier New", monospace; cursor: pointer; overflow: hidden; }
+  .hk-overlay.on { display: block; }
+  .hk-overlay canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.55; }
+  .hk-overlay::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.28) 0 2px, transparent 2px 4px); }
+  .hk-term { position: absolute; left: 4vw; top: 6vh; width: min(560px, 92vw); font-size: clamp(12px, 1.7vw, 17px); line-height: 1.5; text-shadow: 0 0 8px #33ff66; white-space: pre-wrap; }
+  .hk-term .warn { color: #ffcc33; text-shadow: 0 0 8px #ffcc33; }
+  .hk-term .bad { color: #ff3355; text-shadow: 0 0 8px #ff3355; }
+  .hk-banner { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-weight: 900; font-size: clamp(28px, 8vw, 96px); letter-spacing: 0.06em; color: #ff2244; text-shadow: 3px 0 #00ffff, -3px 0 #ff00ff, 0 0 30px #ff2244; display: none; animation: hkFlicker 0.18s steps(2) infinite; }
+  .hk-banner small { display: block; font-size: clamp(12px, 2.2vw, 24px); letter-spacing: 0.2em; color: #33ff66; text-shadow: 0 0 10px #33ff66; margin-top: 0.6em; }
+  .hk-overlay.red { background: rgba(60, 0, 8, 0.82); }
+  .hk-overlay.red .hk-banner { display: block; }
+  .hk-overlay.safe { background: rgba(0, 20, 6, 0.88); }
+  .hk-overlay.safe .hk-banner { display: block; color: #33ff66; text-shadow: 0 0 24px #33ff66; animation: none; }
+  .hk-skip { position: absolute; right: 14px; bottom: 12px; font-size: 13px; opacity: 0.7; }
+  @keyframes hkFlicker { 0% { transform: translateY(-50%) translateX(-4px) skewX(3deg); opacity: 1; } 50% { transform: translateY(-50%) translateX(5px) skewX(-4deg); opacity: 0.8; } 100% { transform: translateY(-50%) translateX(0); opacity: 1; } }
+  @keyframes hkGlitch {
+    0%, 92%, 100% { transform: none; filter: none; }
+    93% { transform: translate(-6px, 2px) skewX(4deg); filter: hue-rotate(90deg) saturate(3); }
+    95% { transform: translate(7px, -3px) skewX(-5deg); filter: invert(1) hue-rotate(180deg); }
+    97% { transform: translate(-3px, 4px); filter: contrast(2) saturate(0) ; }
+  }
+  html.hk-active header, html.hk-active main, html.hk-active footer { animation: hkGlitch 0.9s infinite; }
   /* ---------- Arcade (12 mini games) ---------- */
   .arcade-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82); display: none;
@@ -1573,6 +1597,13 @@
       <button class="piano-close" id="piano-close" aria-label="Close piano">&times;</button>
       <div class="piano-keys" id="piano-keys"></div>
     </div>
+  </div>
+
+  <div class="hk-overlay" id="hk-overlay" aria-hidden="true">
+    <canvas id="hk-rain"></canvas>
+    <div class="hk-term" id="hk-term"></div>
+    <div class="hk-banner" id="hk-banner"></div>
+    <div class="hk-skip">click or press Esc to skip</div>
   </div>
 
   <div class="arcade-overlay" id="arcade-overlay">
@@ -3214,6 +3245,103 @@
 
 
 
+<script>
+    /* =====================================================================
+       FAKE HACK EFFECT - only an animation, nothing is touched or sent.
+       Runs once per visit a few seconds after load. window.startHack() replays it.
+       ===================================================================== */
+    (function () {
+      var ov = document.getElementById('hk-overlay');
+      if (!ov) return;
+      var term = document.getElementById('hk-term'), banner = document.getElementById('hk-banner');
+      var cv = document.getElementById('hk-rain'), cx = cv.getContext('2d');
+      var timers = [], rainT = null, running = false;
+      var LINES = [
+        ['[*] Connecting to nikolai-site ...', ''],
+        ['[+] Port 443 open', ''],
+        ['[+] Bypassing firewall ........ OK', ''],
+        ['[+] Injecting payload ......... OK', 'warn'],
+        ['[!] Root access obtained', 'warn'],
+        ['[!] Reading secret files:  /etc/passwd  /piano/songs  /cubes/', 'warn'],
+        ['[!] Downloading homework ...  37%', 'warn'],
+        ['[!] Downloading homework ...  81%', 'warn'],
+        ['[!] Downloading homework ... 100%', 'bad'],
+        ['[X] ALL YOUR CUBES ARE BELONG TO US', 'bad']
+      ];
+      function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+      function size() { cv.width = innerWidth; cv.height = innerHeight; }
+      function startRain() {
+        size();
+        var cols = Math.ceil(cv.width / 16), drops = [];
+        for (var i = 0; i < cols; i++) drops[i] = Math.random() * -40;
+        rainT = setInterval(function () {
+          cx.fillStyle = 'rgba(0, 8, 0, 0.12)';
+          cx.fillRect(0, 0, cv.width, cv.height);
+          cx.fillStyle = '#33ff66';
+          cx.font = '15px monospace';
+          for (var c = 0; c < cols; c++) {
+            var ch = String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96));
+            cx.fillText(ch, c * 16, drops[c] * 16);
+            if (drops[c] * 16 > cv.height && Math.random() > 0.96) drops[c] = 0;
+            drops[c]++;
+          }
+        }, 45);
+      }
+      function beep(f, d) {
+        try {
+          var a = beep.a || (beep.a = new (window.AudioContext || window.webkitAudioContext)());
+          var o = a.createOscillator(), g = a.createGain();
+          o.type = 'square'; o.frequency.value = f;
+          g.gain.value = 0.02; g.gain.exponentialRampToValueAtTime(0.0005, a.currentTime + d);
+          o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + d);
+        } catch (e) { /* audio blocked */ }
+      }
+      function stop() {
+        timers.forEach(clearTimeout); timers = [];
+        clearInterval(rainT);
+        ov.classList.remove('on', 'red', 'safe');
+        document.documentElement.classList.remove('hk-active');
+        running = false;
+      }
+      function start() {
+        if (running) return;
+        running = true;
+        term.innerHTML = ''; banner.innerHTML = '';
+        ov.classList.remove('red', 'safe');
+        ov.classList.add('on');
+        document.documentElement.classList.add('hk-active');
+        startRain();
+        LINES.forEach(function (l, i) {
+          later(function () {
+            var d = document.createElement('div');
+            if (l[1]) d.className = l[1];
+            d.textContent = l[0];
+            term.appendChild(d);
+            beep(l[1] === 'bad' ? 180 : 700 + i * 40, 0.06);
+          }, 500 + i * 650);
+        });
+        later(function () {
+          ov.classList.add('red');
+          banner.innerHTML = 'SYSTEM HACKED<small>nikolai-site.exe has stopped responding</small>';
+          beep(110, 0.5); beep(95, 0.7);
+        }, 7600);
+        later(function () {
+          ov.classList.remove('red');
+          ov.classList.add('safe');
+          banner.innerHTML = 'JUST KIDDING :)<small>this was only a visual effect - the site is safe</small>';
+          document.documentElement.classList.remove('hk-active');
+        }, 11500);
+        later(stop, 14000);
+      }
+      ov.addEventListener('click', stop);
+      document.addEventListener('keydown', function (e) { if (running && e.key === 'Escape') stop(); });
+      window.addEventListener('resize', function () { if (running) size(); });
+      window.startHack = start;
+      var seen = false;
+      try { seen = sessionStorage.getItem('hk-seen') === '1'; sessionStorage.setItem('hk-seen', '1'); } catch (e) { /* ignore */ }
+      if (!seen) later(start, 3500);
+    })();
+</script>
 <script>
     /* =====================================================================
        ARCADE  -  12 mini games, opened with the cube code
@@ -5410,7 +5538,7 @@
               'void main(){ vec3 wp = vec3(uCam.x + aXZ.x * uR, uY, uCam.z + aXZ.y * uR); vP = wp.xz; vD = length(wp.xz - uCam.xz);\n' +
               ' gl_Position = uVP * vec4(wp, 1.0); }',
               HP_FRAG +
-              'uniform vec3 uFogColor; uniform float uTime; uniform float uLum; uniform vec3 uSunDir; uniform float uR;\n' +
+              'uniform vec3 uFogColor; uniform float uTime; uniform float uLum; uniform vec3 uSunDir; uniform float uR; uniform vec3 uCam;\n' +
               'varying vec2 vP; varying float vD;\n' +
               'float hsh(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }\n' +
               'float vnoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);\n' +
@@ -5425,13 +5553,13 @@
               ' vec2 toSun = normalize(vec2(uSunDir.x + 0.0001, 0.4)) * 55.0;\n' +
               ' float ds = dens(vP + toSun);\n' +
               ' float shadowed = clamp(ds * 1.25, 0.0, 1.0) * d;\n' +
-              ' float light = mix(1.0, 0.56, shadowed);\n' +
-              ' float under = mix(1.0, 0.64, smoothstep(0.15, 1.0, d));\n' +
-              ' vec3 col = vec3(1.0, 0.995, 0.98) * light * under;\n' +
+              ' float light = mix(1.0, 0.8, shadowed);\n' +
+              ' float under = mix(1.0, 0.84, smoothstep(0.15, 1.0, d));\n' +
+              ' vec3 col = vec3(1.0, 0.998, 0.99) * light * under * 1.04;\n' +
               ' float rim = (1.0 - d) * d * 4.0 * clamp(uSunDir.y * 2.0, 0.0, 1.0);\n' +
               ' col += vec3(1.0, 0.9, 0.75) * rim * 0.22;\n' +
               ' col *= uLum;\n' +
-              ' float far = clamp(vD / uR, 0.0, 1.0);\n' +
+              ' float far = clamp(length(vP - uCam.xz) / uR, 0.0, 1.0);\n' +
               ' col = mix(col, uFogColor, far * 0.55);\n' +
               ' float a = smoothstep(0.0, 0.38, d) * 0.93 * (1.0 - smoothstep(0.55, 1.0, far));\n' +
               ' gl_FragColor = vec4(col, a); }',
