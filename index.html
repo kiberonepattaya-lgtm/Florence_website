@@ -426,6 +426,19 @@
     cursor: pointer;
   }
   .name-btn:hover { transform: scale(1.1); }
+  .secret-mc-btn {
+    display: inline-block;
+    width: 1.6em;
+    height: 1.2em;
+    margin-left: 0.3em;
+    padding: 0;
+    vertical-align: middle;
+    background: transparent;
+    border: none;
+    outline: none;
+    opacity: 0;
+    cursor: default;
+  }
 
   /* ---------- Theme picker ---------- */
   .theme-picker {
@@ -1262,7 +1275,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">Made by <button class="name-btn" id="name-btn">Nikolai</button></footer>
+  <footer class="site-footer">Made by <button class="name-btn" id="name-btn">Nikolai</button><button class="secret-mc-btn" id="secret-mc" aria-label="Secret" tabindex="-1" onclick="document.getElementById('mc-open').click()"></button></footer>
 
   <div class="game-overlay" id="game-overlay">
     <div class="game-box">
